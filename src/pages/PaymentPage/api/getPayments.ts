@@ -1,11 +1,6 @@
 import { buildURL } from "../utils/buildURL";
 import { GetPaymentsProps } from "../../../types/payment";
 
-export interface APIError {
-    status: number;
-    message: string;
-}
-
 export async function getPayments({ params }: GetPaymentsProps) {
     try {
         const res = await fetch(buildURL(params));

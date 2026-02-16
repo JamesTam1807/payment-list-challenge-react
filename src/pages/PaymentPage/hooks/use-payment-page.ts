@@ -2,13 +2,14 @@ import { useEffect, useRef, useState } from 'react';
 import { PaymentParams, PaymentResponse, Currency, GetPaymentsResponseError } from '../../../types/payment';
 import { getPayments } from '../api/get-payments';
 import { usePaymentHandlers } from './use-payment-handlers';
+import { DEFAULT_PAGE_SIZE } from '../../../constants';
 
 export const usePaymentPage = () => {
   const [data, setData] = useState<PaymentResponse>({
     payments: [],
     total: 0,
     page: 1,
-    pageSize: 5,
+    pageSize: DEFAULT_PAGE_SIZE,
   });
   const [currency, setCurrency] = useState<Currency>(undefined);
   const [error, setError] = useState<GetPaymentsResponseError | null>(null);

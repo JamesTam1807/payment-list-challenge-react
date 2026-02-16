@@ -8,3 +8,5 @@ export const CURRENCIES = [
 export const PAYMENT_STATUSES = [
   "completed", "pending", "failed", "refunded"
 ] as const;
+
+export const DEFAULT_PAGE_SIZE = 5;

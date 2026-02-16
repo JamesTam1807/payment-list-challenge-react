@@ -1,30 +1,70 @@
-import { useEffect, useState } from "react"
-import { PaymentData } from "../../../types/payment";
-import { getPayments } from "../api/getPayments";
+import { useEffect, useRef, useState } from 'react';
+import { PaymentParams, PaymentResponse, Currency, GetPaymentsResponseError } from '../../../types/payment';
+import { getPayments } from '../api/get-payments';
+import { usePaymentHandlers } from './use-payment-handlers';
 
 export const usePaymentPage = () => {
-    const [data, setData] = useState<PaymentData>({ payments: [] });
-    const [loading, setLoading] = useState<boolean>(false);
-    const [error, setError] = useState<Error | null>(null);
+  const [data, setData] = useState<PaymentResponse>({
+    payments: [],
+    total: 0,
+    page: 1,
+    pageSize: 5,
+  });
+  const [currency, setCurrency] = useState<Currency>(undefined);
+  const [error, setError] = useState<GetPaymentsResponseError | null>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
+  const [isFiltered, setIsFiltered] = useState<boolean>(false);
+  const [isPrevPageDisabled, setIsPrevPageDisabled] = useState<boolean>(true);
+  const [isNextPageDisabled, setIsNextPageDisabled] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(1);
+  const [searchParams, setSearchParams] = useState<PaymentParams>({
+    page,
+    pageSize: 5,
+  });
+  const actions = usePaymentHandlers({
+    state: { page, currency, searchParams },
+    refs: { searchRef },
+    services: { fetchPayments },
+    setters: {
+      setPage,
+      setCurrency,
+      setSearchParams,
+      setIsFiltered,
+      setIsPrevPageDisabled,
+      setIsNextPageDisabled,
+      setError,
+    },
+  });
 
-    const params = {
-        page: 1,
-        pageSize: 5
+  async function fetchPayments(params?: PaymentParams): Promise<PaymentResponse | null> {
+    const currentParams: PaymentParams = params ?? searchParams;
+
+    const res = await getPayments({ searchParams: currentParams });
+
+    if (res.error) {
+      setError(res.error);
+      return null;
     }
-    
-    useEffect(() => {
-        async function fetchData() {
-            const res = await getPayments({ params });
-            console.log("JAMES: ", res);
-            
-            if (res.data) {
-                setData(res.data);
-                setError(null);
-            }
-        }
-        setLoading(false);
-        fetchData();
-    }, []);
 
-    return { data, loading, error };
-}
+    setData(res.data);
+    return res.data;
+  }
+
+  useEffect(() => {
+    fetchPayments();
+  }, []);
+
+  return {
+    data,
+    state: {
+      searchRef,
+      currency,
+      isFiltered,
+      page,
+      isPrevPageDisabled,
+      isNextPageDisabled,
+    },
+    actions,
+    error,
+  };
+};

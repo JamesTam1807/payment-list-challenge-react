@@ -1,7 +1,7 @@
 import React from "react";
 import { I18N } from "./constants/i18n";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { PaymentsPage } from "./components/PaymentsPage";
+import { PaymentPageController } from "./pages/PaymentPage/PaymentPage.controller";
 
 // This is required for tests to pass if ReactQuery is used
 // you don't have to use this library in your solution.
@@ -24,7 +24,7 @@ function App() {
           </div>
         </header>
         <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          <PaymentsPage />
+          <PaymentPageController />
         </main>
       </div>
     </QueryClientProvider>

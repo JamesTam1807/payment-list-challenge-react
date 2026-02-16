@@ -1,13 +1,8 @@
-import { I18N } from "../../constants/i18n";
-import { usePaymentPage } from "./hooks/use-payment-page";
-import { PaymentPageView } from "./PaymentPage.view";
-import { Spinner } from "../../components/components";
+import { usePaymentPage } from './hooks/use-payment-page';
+import { PaymentPageView } from './PaymentPage.view';
 
 export const PaymentPageController: React.FC = () => {
-    const { data, loading, error } = usePaymentPage();
+  const { data, state, actions, error } = usePaymentPage();
 
-    if (loading) return <Spinner/>;
-    if (error) return <>{I18N.INTERNAL_SERVER_ERROR}</>;
-
-    return <PaymentPageView data={data.payments}/>;
-}
+  return <PaymentPageView data={data} state={state} actions={actions} error={error} />;
+};
